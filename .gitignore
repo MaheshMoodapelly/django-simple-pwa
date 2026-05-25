@@ -1077,3 +1077,24 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/python,venv,virtualenv,django,vs,visualstudio,visualstudiocode,pycharm+all,phpstorm+all,vim,database,git,gis,gitbook,direnv,dotenv,jenv,jetbrains+all
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Django
+db.sqlite3
+staticfiles/
+media/
+
+# logs
+nohup.out
+
+# secrets / keys
+*.pem
+*.key
+myrsa
+myrsa.pub
+
+# env
+.env
