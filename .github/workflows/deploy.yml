@@ -34,6 +34,6 @@ jobs:
 
             pkill -f "manage.py runserver" || true
 
-            nohup python3 manage.py runserver 0.0.0.0:8000 > django.log 2>&1 &
+            nohup python3 manage.py runserver 0.0.0.0:8000 &
 
-            echo "Deployment successful"
+            echo "Deployment successful"  
