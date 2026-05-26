@@ -1,5 +1,4 @@
-#a workflow file for deploying simple django application
-name: Django CI/CD
+name:Simple Django Deploy
 
 on:
   push:
@@ -11,18 +10,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Deploy to EC2
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ubuntu
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          cd /home/ubuntu/django-simple-pwa
-          git pull
-          source venv/bin/activate
-          pip install -r requirements.txt
-          python manage.py migrate
-          pkill -f runserver || true
-          nohup python manage.py runserver 0.0.0.0:8000 &
-          sudo systemctl restart nginx
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+
+          script: |
+            set -e
+            echo "Starting deployment..."
+
+            cd /home/ubuntu/django-simple-pwa
+
+            echo "📥 Pulling latest code..."
+            git pull origin main
+
+            echo "🐍 Activating virtual environment..."
+            source venv/bin/activate
+
+            echo "📦 Installing dependencies..."
+            pip install --upgrade pip
+            pip install -r requirements.txt
+
+            echo "Running migrations..."
+            python3 manage.py migrate --noinput
+
+            echo "📁 Collecting static files..."
+            python3 manage.py collectstatic --noinput || true
+
+            echo "🔄 Restarting Django server..."
+
+            # Stop previous runserver process (if any)
+            pkill -f "manage.py runserver" || true
+
+            # Start Django in background
+            nohup python3 manage.py runserver 0.0.0.0:8000 > django.log 2>&1 &
+
+            echo "✅ Deployment complete!"
