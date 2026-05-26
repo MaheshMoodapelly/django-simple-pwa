@@ -18,7 +18,7 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          cd /home/ubuntu/django-demo
+          cd /home/ubuntu/django-simple-pwa
           git pull
           source venv/bin/activate
           pip install -r requirements.txt
